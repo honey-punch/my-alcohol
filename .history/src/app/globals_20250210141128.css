@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="date"] {
+  // 캘린더 아이콘을 클릭해야만 달력이 보이는데 캘린더의 영역을 조절하기위함
+  position: relative;
+  // 배경에 원하는 아이콘 삽입
+  background: url(아이콘 주소) no-repeat;
+  padding-right: 10px;
+  // 글자색 변경
+  color: #858585;
+}
+
+// 기본으로 제공되는 달력 이모지 display 없애기
+// + 기본 값으론 캘린더를 눌러야만 달력이 나왔는데 이 기능도 무력화
+input[type="date"]::-webkit-clear-button,
+input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+// 캘린더 아이콘을 클릭하는 영역을 의미하는 선택자
+// 이 영역을 input의 크기만큼으로 설정(width,heigh 값이 100%)하여
+// input의 어떤 곳을 클릭해도 캘린더를 클릭한 것과 같도록 함
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  //왼쪽위에 위치시키고 클릭 영역을 부모(input)의 크기만큼 가짐
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  // 배경과 글자를 투명하게 하여 기존의 아이콘이 없는 것처럼 보여줌
+  background: transparent;
+  color: transparent;
+}
+input[type="date"]::before {
+  // html의 data-placeholder 속성에서 값을 받아와 content에 삽입
+  // -> placeholder는 작동안하고 data-placeholder로 값을 지정해야함
+  content: attr(data-placeholder);
+  width: 100%;
+}
+
+// 유효값이 입력된 경우 before에 있는 것을 없애준다.
+input[type="date"]::valid::before {
+  display: none;
+}
