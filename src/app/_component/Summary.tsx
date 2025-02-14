@@ -62,7 +62,7 @@ export default function Summary({ alcoholDates }: SummaryProps) {
         style={{ width: BOX_SIZE, height: BOX_SIZE }}
         className="bg-pink-300 text-white flex justify-center items-center flex-col gap-2"
       >
-        <div>금주한지</div>
+        <div>금주한 지</div>
         <div>
           <span className="text-6xl">{diffDay}</span>
           <span className="mt-7">일</span>
@@ -74,7 +74,7 @@ export default function Summary({ alcoholDates }: SummaryProps) {
         style={{ width: BOX_SIZE, height: BOX_SIZE }}
         className="bg-violet-500 text-white flex justify-center items-center flex-col gap-2"
       >
-        <div>금주한지</div>
+        <div>금주한 지</div>
         <div>
           <span className="text-6xl">{diffTime.diffHour}</span>
           <span className="mt-7 mr-2">시간</span>
