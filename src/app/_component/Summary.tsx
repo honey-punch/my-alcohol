@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri";
-
 const BOX_SIZE = 300;
 const SOJU_PRICE_PER_ONE_BOTTLE = 1700;
 const BEER_PRICE_PER_ONE_ML = 6;
@@ -26,32 +23,41 @@ export default function Summary({ alcoholDates }: SummaryProps) {
   const beerAverage = Math.round(alcoholDates.map((v) => v.beer).reduce((a, b) => a + b) / alcoholDates.length);
 
   // 4번 박스
-  // TODO - DB에 저장해볼까
-  // const wiseSaying = [
-  //   "내가 또 술을 마시면 개다.",
-  //   "간한테 미안하지도 않냐?",
-  //   "간: 차라리 죽여줘...",
-  //   "술마시면 하루가 날라간다.",
-  //   "안마셔도 생각보다 괜찮다.",
-  //   "마시고 후회할꺼 왜마시냐?",
-  // ];
-  // const randomWiseSaying =
-  //   wiseSaying[Math.floor(Math.random() * wiseSaying.length)];
-
-  // 5번 박스
-  const [motive, setMotive] = useState<string>("건강");
-
-  function handleChangeMotive(e: React.ChangeEvent<HTMLInputElement>) {
-    const { value } = e.target;
-
-    setMotive(value);
-  }
-
-  // 6번 박스
-
   const sojuSavingMoney = SOJU_PRICE_PER_ONE_BOTTLE * sojuAverage;
   const beerSavingMoney = BEER_PRICE_PER_ONE_ML * beerAverage;
   const totalSavingMoney = (sojuSavingMoney + beerSavingMoney) * diffDay;
+
+  // 5번 박스
+  const lastWeekDateCount = alcoholDates.filter((v) => {
+    const dayOfWeek = today.getDay();
+
+    const lastMonday = new Date(today);
+    lastMonday.setDate(today.getDate() - (dayOfWeek + 6) % 7 - 7);
+    lastMonday.setHours(0, 0, 0, 0);
+
+    const lastSunday = new Date(lastMonday);
+    lastSunday.setDate(lastMonday.getDate() + 6);
+    lastSunday.setHours(23, 59, 59, 999);
+
+    const vDate = new Date(v.date);
+    return vDate >= lastMonday && vDate <= lastSunday;
+  }).length;
+
+  // 6번 박스
+  const thisWeekDateCount = alcoholDates.filter((v) => {
+    const dayOfWeek = today.getDay();
+
+    const thisMonday = new Date(today);
+    thisMonday.setDate(today.getDate() - (dayOfWeek + 6) % 7);
+    thisMonday.setHours(0, 0, 0, 0);
+
+    const thisSunday = new Date(thisMonday);
+    thisSunday.setDate(thisMonday.getDate() + 6);
+    thisSunday.setHours(23, 59, 59, 999);
+
+    const vDate = new Date(v.date);
+    return vDate >= thisMonday && vDate <= thisSunday;
+  }).length;
 
   // etc functions
 
@@ -103,37 +109,10 @@ export default function Summary({ alcoholDates }: SummaryProps) {
         </div>
       </div>
 
-      {/* 4번 박스 - 명언(같은 개소리) */}
-      <div
-        style={{ width: BOX_SIZE, height: BOX_SIZE }}
-        className="bg-amber-400 text-white flex justify-center items-center"
-      >
-        <div className="flex font-semibold gap-1">
-          <RiDoubleQuotesL className="opacity-50" />
-          {"내가 또 술을 마시면 개다."}
-          <RiDoubleQuotesR className="opacity-50" />
-        </div>
-      </div>
-
-      {/* 5번 박스 - 왜하냐(본인이 설정하는 동기부여) */}
+      {/* 4번 박스 - 1번 박스 * 3번 박스 * 술값으로 얼마 아꼈는지 */}
       <div
         style={{ width: `${BOX_SIZE}px`, height: BOX_SIZE }}
-        className="bg-gray-200 text-black flex justify-center items-center flex-col gap-4"
-      >
-        <div className="opacity-50">내가 왜 금주따위를?</div>
-        <input
-          type="text"
-          value={motive}
-          onChange={handleChangeMotive}
-          style={{ background: "none" }}
-          className="focus:outline-none border-b border-black font-bold"
-        />
-      </div>
-
-      {/* 6번 박스 - 1번 박스 * 3번 박스 * 술값으로 얼마 아꼈는지 */}
-      <div
-        style={{ width: `${BOX_SIZE}px`, height: BOX_SIZE }}
-        className="bg-emerald-500 text-white flex justify-center items-center flex-col gap-2"
+        className="bg-amber-500 text-white flex justify-center items-center flex-col gap-2"
       >
         <div>{diffDay}일 참아서</div>
         <div className="flex gap-2 ">
@@ -141,6 +120,30 @@ export default function Summary({ alcoholDates }: SummaryProps) {
           <span className="mt-7">원</span>
         </div>
         <div>절약했어요!</div>
+      </div>
+
+      {/* 5번 박스 - 저번주 주3일 성공여부 */}
+      <div
+        style={{ width: `${BOX_SIZE}px`, height: BOX_SIZE }}
+        className="bg-lime-500 text-white flex justify-center items-center flex-col gap-2 relative"
+      >
+        <div>지난 주는</div>
+        <div className="flex gap-2">
+          <span className="text-6xl">{lastWeekDateCount}</span>
+          <span className="mt-7">일 마셨네요.</span>
+        </div>
+      </div>
+
+      {/* 6번 박스 - 이번주 몇회 마셨는지 */}
+      <div
+        style={{ width: `${BOX_SIZE}px`, height: BOX_SIZE }}
+        className="bg-teal-500 text-white flex justify-center items-center flex-col gap-2"
+      >
+        <div>이번 주는</div>
+        <div className="flex gap-2">
+          <span className="text-6xl">{thisWeekDateCount}</span>
+          <span className="mt-7">일 마셨네요.</span>
+        </div>
       </div>
     </div>
   );
